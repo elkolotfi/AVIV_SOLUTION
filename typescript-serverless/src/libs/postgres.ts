@@ -15,7 +15,7 @@ export const getPostgres = async (): Promise<PostgresClient> => {
   }
 
   return postgres;
-}
+};
 
 /**
  * Utility function to turn a dictionnary to a set of

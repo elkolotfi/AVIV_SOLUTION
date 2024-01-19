@@ -1,25 +1,25 @@
-import { PriceRepository, getRepository as getPricesRepository } from "@/repositories/prices";
+import {
+  PriceRepository,
+  getRepository as getPricesRepository,
+} from "@/repositories/prices";
 import { Listing, ListingWrite, Price } from "@/types.generated";
 
 export class PriceService {
-    private static instance: PriceService;
-    
-    private constructor(
-        private pricesRepository: PriceRepository,
-    ) {}
+  private static instance: PriceService;
 
-    static async getInstance(): Promise<PriceService> {
-        if (!PriceService.instance) {
-            const pricesRepository = await getPricesRepository();
+  private constructor(private pricesRepository: PriceRepository) {}
 
-            PriceService.instance = new PriceService(pricesRepository);
-        }
+  static async getInstance(): Promise<PriceService> {
+    if (!PriceService.instance) {
+      const pricesRepository = await getPricesRepository();
 
-        return PriceService.instance;
+      PriceService.instance = new PriceService(pricesRepository);
     }
 
+    return PriceService.instance;
+  }
 
-    async getAll(listingId: number): Promise<Price[]> {
-        return await this.pricesRepository.getPricesHistory(listingId);
-    }
+  async getAll(listingId: number): Promise<Price[]> {
+    return await this.pricesRepository.getPricesHistory(listingId);
+  }
 }

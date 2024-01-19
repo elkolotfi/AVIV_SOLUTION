@@ -118,7 +118,10 @@ export async function getRepository(): Promise<ListingRepository> {
       return tableRowToListing(result.rows[0]);
     },
 
-    async updateListing(listingId: number, listing: ListingWrite): Promise<Listing> {
+    async updateListing(
+      listingId: number,
+      listing: ListingWrite
+    ): Promise<Listing> {
       const originalListing = await this.getListing(listingId);
 
       const tableRow = listingToTableRow(listing, originalListing.created_date);

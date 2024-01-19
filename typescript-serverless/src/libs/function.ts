@@ -8,10 +8,9 @@ import * as console from "console";
 import { ListingService } from "@/services/listing.service";
 import { PriceService } from "@/services/price.service";
 
-
 export type FunctionContext = {
-  listingService: ListingService,
-  priceService: PriceService,
+  listingService: ListingService;
+  priceService: PriceService;
 };
 
 export type FunctionResult<T extends object> = {
@@ -24,7 +23,7 @@ export type FunctionHandler<
   RequestBody extends object = undefined
 > = (
   event: ParsedEvent<RequestBody>,
-  context: FunctionContext,
+  context: FunctionContext
 ) => Promise<FunctionResult<ResponseBody>>;
 
 export type ParsedEvent<T> = Omit<APIGatewayProxyEvent, "body"> & { body: T };
