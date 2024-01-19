@@ -1,13 +1,14 @@
 import { functionHandler } from "@/libs/function";
+import { getRepository } from "@/repositories/prices";
 import { Price } from "@/types.generated";
 
-export const getListingPrices = functionHandler<Price[]>(async () => {
-  // Replace this with your implementation.
-  return {
-    statusCode: 200,
-    response: [
-      { price_eur: 100000, created_date: "2023-01-12T09:23:36Z" },
-      { price_eur: 150000, created_date: "2023-01-17T08:17:32Z" },
-    ],
-  };
+export const getListingPrices = functionHandler<Price[]>(
+  async (event, { postgres }) => {
+    const listingIdParam = parseInt(event.pathParameters.id);
+    const response = await getRepository(postgres).getHistoryPrices(listingIdParam);
+
+    return {
+      statusCode: 200,
+      response,
+    };
 });
