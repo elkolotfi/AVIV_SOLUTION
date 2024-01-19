@@ -1,5 +1,6 @@
 import { functionHandler } from "@/libs/function";
 import { getRepository } from "@/repositories/listings";
+import { getRepository as getPricesRepository } from "@/repositories/prices";
 import { Listing, ListingWrite } from "@/types.generated";
 import { EntityNotFound, NotFound } from "@/libs/errors";
 
@@ -17,6 +18,8 @@ export const addListing = functionHandler<Listing, ListingWrite>(
       event.body
     );
 
+    await getPricesRepository(context.postgres).updatePricesHistory(listing);
+
     return { statusCode: 201, response: listing };
   }
 );
@@ -28,6 +31,8 @@ export const updateListing = functionHandler<Listing, ListingWrite>(
         parseInt(event.pathParameters.id),
         event.body
       );
+
+      await getPricesRepository(context.postgres).updatePricesHistory(listing);
 
       return { statusCode: 200, response: listing };
     } catch (e) {
