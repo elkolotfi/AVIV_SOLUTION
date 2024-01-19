@@ -20,6 +20,7 @@ This section contains additional questions your expected to answer before the de
 - **What is missing with your implementation to go to production?**
   - In order to be prod ready, we need first to handle user inputs (we can do that using middy validator)
   - We should make insert and update functions transactional (otherwise, if insert or update finish successfully and insert of price history fails, we end up with corrupted prices history)
+  - add pagination to get all listings, otherwise, it will quickly become non usable
   - We need to add more unit tests (and integration tests)
   - Currently the api is public, so anyone would be able to insert and update listings. Thus, we should manage authentication and authorisation
   - Add some logging (using some tool like winston)
