@@ -1,6 +1,6 @@
 import PostgresClient from "serverless-postgres";
 import { Listing, ListingWrite } from "@/types.generated";
-import { extractVariables } from "@/libs/postgres";
+import { extractVariables, getPostgres } from "@/libs/postgres";
 import { EntityNotFound } from "@/libs/errors";
 
 type ListingTableRow = {
@@ -65,7 +65,9 @@ function listingToTableRow(
   };
 }
 
-export function getRepository(postgres: PostgresClient) {
+export async function getRepository() {
+  const postgres: PostgresClient = await getPostgres();
+
   return {
     async getAllListings(): Promise<Listing[]> {
       const queryString = `SELECT * FROM listing`;

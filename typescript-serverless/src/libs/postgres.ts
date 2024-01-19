@@ -1,12 +1,21 @@
 import PostgresClient from "serverless-postgres";
 
-export const postgres = new PostgresClient({
+const postgres = new PostgresClient({
   application_name: "listingapi-typescript",
   host: process.env.PGHOST,
   database: process.env.PGDATABASE,
   user: process.env.PGUSER,
   password: process.env.PGPASSWORD,
 });
+const INITIALIZED = false;
+
+export const getPostgres = async (): Promise<PostgresClient> => {
+  if (!INITIALIZED) {
+    await postgres.connect();
+  }
+
+  return postgres;
+}
 
 /**
  * Utility function to turn a dictionnary to a set of

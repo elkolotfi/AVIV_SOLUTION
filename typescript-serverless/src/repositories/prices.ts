@@ -1,6 +1,6 @@
 import PostgresClient from "serverless-postgres";
 import { Listing, Price } from "@/types.generated";
-import { extractVariables } from "@/libs/postgres";
+import { extractVariables, getPostgres } from "@/libs/postgres";
 
 interface PriceTableRow {
   id?: number;
@@ -24,7 +24,9 @@ function listingToTableRow(listing: Listing): PriceTableRow {
   };
 }
 
-export function getRepository(postgres: PostgresClient) {
+export async function getRepository() {
+  const postgres: PostgresClient = await getPostgres();
+
   return {
     async getPricesHistory(listingId: number): Promise<Price[]> {
       const queryString = `SELECT * FROM prices where listing_id = $1`;

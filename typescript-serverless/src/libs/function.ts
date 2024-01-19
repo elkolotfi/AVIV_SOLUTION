@@ -1,6 +1,4 @@
 import { APIGatewayProxyEvent, APIGatewayProxyResult } from "aws-lambda";
-import PostgresClient from "serverless-postgres";
-import { postgres } from "@/libs/postgres";
 import middy from "@middy/core";
 import middyJsonBodyParser from "@middy/http-json-body-parser";
 import { formatJSONResponse } from "./api-gateway";
@@ -8,9 +6,6 @@ import { APIError } from "@/types.generated";
 import { NotFound } from "./errors";
 import * as console from "console";
 
-export type FunctionContext = {
-  postgres: PostgresClient;
-};
 
 export type FunctionResult<T extends object> = {
   response: T;
@@ -21,8 +16,7 @@ export type FunctionHandler<
   ResponseBody extends object,
   RequestBody extends object = undefined
 > = (
-  event: ParsedEvent<RequestBody>,
-  context: FunctionContext
+  event: ParsedEvent<RequestBody>
 ) => Promise<FunctionResult<ResponseBody>>;
 
 export type ParsedEvent<T> = Omit<APIGatewayProxyEvent, "body"> & { body: T };
@@ -43,11 +37,10 @@ export function functionHandler<
 >(handler: FunctionHandler<ResponseBody, RequestBody>) {
   return middify<RequestBody>(
     async (event: ParsedEvent<RequestBody>): Promise<APIGatewayProxyResult> => {
-      await postgres.connect();
       let response: ResponseBody | APIError;
       let statusCode: number;
       try {
-        const result = await handler(event, { postgres });
+        const result = await handler(event);
         response = result.response;
         statusCode = result.statusCode;
       } catch (e) {
@@ -62,8 +55,6 @@ export function functionHandler<
           throw e;
         }
       }
-
-      await postgres.end();
 
       return formatJSONResponse(response, statusCode);
     }
