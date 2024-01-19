@@ -65,7 +65,14 @@ function listingToTableRow(
   };
 }
 
-export async function getRepository() {
+export interface ListingRepository {
+  getAllListings: () => Promise<Listing[]>;
+  getListing: (listingId: number) => Promise<Listing>;
+  insertListing: (listing: ListingWrite) => Promise<Listing>;
+  updateListing: (listingId: number, listing: ListingWrite) => Promise<Listing>;
+}
+
+export async function getRepository(): Promise<ListingRepository> {
   const postgres: PostgresClient = await getPostgres();
 
   return {
@@ -76,7 +83,7 @@ export async function getRepository() {
       return result.rows.map(tableRowToListing);
     },
 
-    async getListing(listingId: number) {
+    async getListing(listingId: number): Promise<Listing> {
       const queryString = `SELECT * FROM listing WHERE id = $1`;
       const queryValues = [listingId];
 
@@ -92,7 +99,7 @@ export async function getRepository() {
       return tableRowToListing(listing);
     },
 
-    async insertListing(listing: ListingWrite) {
+    async insertListing(listing: ListingWrite): Promise<Listing> {
       const tableRow = listingToTableRow(listing, new Date());
 
       const {
@@ -111,7 +118,7 @@ export async function getRepository() {
       return tableRowToListing(result.rows[0]);
     },
 
-    async updateListing(listingId: number, listing: ListingWrite) {
+    async updateListing(listingId: number, listing: ListingWrite): Promise<Listing> {
       const originalListing = await this.getListing(listingId);
 
       const tableRow = listingToTableRow(listing, originalListing.created_date);

@@ -24,6 +24,11 @@ function listingToTableRow(listing: Listing): PriceTableRow {
   };
 }
 
+export interface PriceRepository {
+  getPricesHistory(listingId: number): Promise<Price[]>;
+  updatePricesHistory(listing: Listing): Promise<void>;
+}
+
 export async function getRepository() {
   const postgres: PostgresClient = await getPostgres();
 
